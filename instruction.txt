@@ -1,0 +1,8 @@
+yarn init or npm init
+yarn add typescript --dev
+yarn add mongoose express
+tsc --init
+then in your tsconfig.json file change the rootdir and outdir directory as you want
+for example :   "rootDir": "./src",
+                 "outDir": "./dist", 
+
