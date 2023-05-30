@@ -6,3 +6,8 @@ then in your tsconfig.json file change the rootdir and outdir directory as you w
 for example :   "rootDir": "./src",
                  "outDir": "./dist", 
 
+now create a branch  for this project as you wish . 
+               git checkout -b UM-2
+               git add . 
+               git commit -m "project setup"
+               git push origin UM-2
