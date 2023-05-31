@@ -1,8 +1,23 @@
 yarn init or npm init
 yarn add typescript --dev
-yarn add mongoose express
+yarn add mongoose express dotenv cors
 tsc --init
 then in your tsconfig.json file change the rootdir and outdir directory as you want
 for example :   "rootDir": "./src",
                  "outDir": "./dist", 
 
+now create a branch  for this project as you wish . 
+               git checkout -b UM-2
+               git add . 
+               git commit -m "project setup"
+               git push origin UM-2
+create src folder 
+         - app.ts -> ekhane express k import kora and express k call diya r export korte hbe jate server.ts e moodhe import kora jay .
+           - then cors and parse 
+         - server.ts -> ekhane ekta function er moddhe mongoose connect kora and app.listen method ke call diya
+create .env file 
+         - first check dotenv package install or not
+         - ekhane port and mongooes uri
+         
+
+         
