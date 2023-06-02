@@ -71,4 +71,14 @@ lint stage -
                               eita add korte hbe package.json -> license er niche diche
               -> 4. then pre-commit er vitor -> 
                                 yarn lint-staged likhte hbe 
-              -> 5. ekhon git commit er age code format and error check korbe              
+              -> 5. ekhon git commit er age code format and error check korbe    
+===================================================================
+Create model and schema using modular pattern
+create nested folder app => modules => users
+              ->Now in users folder create a file 
+                     user.interface.ts => in file create a interface or type  and export it 
+                           -> go to - https://mongoosejs.com/docs/typescript.html
+                     user.model.ts => to create a model 
+                           -> 1. import schema and model from mongooes
+                           -> 2. now in schema timestamp : true dile createdAt , updatedAt create hbe             
+
