@@ -18,6 +18,57 @@ create src folder
 create .env file 
          - first check dotenv package install or not
          - ekhane port and mongooes uri
-         
-
-         
+============================================================
+ESlint , Prettier , husky , lintStage ki?
+ESlint   
+        - jodi code er moddhe kono error hoy seta check kore diya 
+Prettier 
+        - Prettier hocche code format kore diya
+        - jodi kono friend jodi code e vul kore thahole code format kore dibe
+Husky 
+        - code er moddhe jodi vul thake and git add , commit korar por vul janay dibe , push korar age bole dibe , kothai check korbe
+lint Stage -
+            - eta stage er gula check korbe , husky pora code check korbe r lint Stage sudhu jegula stage a ache , or je gula git add kora hoyeche
+================================================================
+how to install ESlint ?
+go to search - typescript ESlint and Prettier setup or go to url https://blog.logrocket.com  
+first install - 
+        - yarn add eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin --save-dev
+        - go to documetation ---follow exatly same--- https://blog.logrocket.com/linting-typescript-eslint-prettier/
+        - in package.json -> in script -> 
+                                           "lint:check": "eslint --ignore-path .eslintignore --ext .js,.ts .",
+                                           "lint-fix": "eslint --fix",
+                                            "prettier:check": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\"",
+And also i have installed two extention 
+                                      -> eslint adn Prettier
+===============================================================
+husky - 
+       - eslint -> amader code e kono warning or error thakle dekabe
+       - prettier -> eita amader code format kore dibe 
+       - husky -> eslint and prettier na kore == amra code github e push kori == 
+                thahole husky code push korar age first e eslint and prettier check kore === 
+                jodi error hoy github e code commit and push korbe na 
+                
+       - install husky
+              -> go to -> https://typicode.github.io/husky/getting-started.html
+              -> 1 . yarn husky install
+              -> 2. yarn add husky --dev
+                 eta hook create kora
+              -> 3. yarn husky add .husky/pre-commit "yarn test"
+              -> 4. ekhon .husky name e ekta folder create hbe and pre-commit name e ekta 
+                    "yarn lint:check" eita likhte hbe
+              -> 5. ekhon jodi git add . and gii commit -m "testing" kori . tahole jodi code er moddhe kono error thake
+                       tahole commit korbe na. 
+===============================================================
+lint stage -
+       - jegula stage e ache se gula check kore , for example : git add and git commit korle stage chole jay 
+       - install lint
+              -> 1. go to -> https://github.com/okonet/lint-staged#readme
+              -> 2. yarn add -D lint-staged
+              -> 3. then add -> "lint-staged" : {
+                                  "src/**/*.ts" : "yarn lint-prettier"
+                              },    
+                              eita add korte hbe package.json -> license er niche diche
+              -> 4. then pre-commit er vitor -> 
+                                yarn lint-staged likhte hbe 
+              -> 5. ekhon git commit er age code format and error check korbe              
