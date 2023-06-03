@@ -6,4 +6,5 @@ dotenv.config({ path: path.join(process.cwd(), '.env') }) // ekhane current dire
 export default {
   port: process.env.PORT,
   database_url: process.env.DATABASE_URL,
+  defaultPassword: process.env.DEFAULT_PASSWORD,
 }

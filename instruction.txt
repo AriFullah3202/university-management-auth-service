@@ -81,4 +81,14 @@ create nested folder app => modules => users
                      user.model.ts => to create a model 
                            -> 1. import schema and model from mongooes
                            -> 2. now in schema timestamp : true dile createdAt , updatedAt create hbe             
-
+=================================================================
+generate password and utils function
+default password korte user k => 
+           .env file ekta default user password dite hbe 
+           tar por ekta service korte hbe and createUser function er moddhe likhte jodi !user.password na thake 
+           .env theke niye set kore dite hbe
+auto key generate -> 
+             - create user.util.ts file and oi file generateUserid name e ekta function kora and export kora 
+             - const currentId = (await findLastUserId()) || (0).toString().padStart(5, '0')
+               const incrementedId = (parseInt(currentId) + 1).toString().padStart(5, '0')
+               -ekhane user id default 00001 theke suru hbe and next e 1 plus hoye 00002 hbe . 
