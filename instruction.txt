@@ -106,3 +106,14 @@ Eslint e rules improve korar
 if you want to override the vscode setting in particular setting
  create .vscode folder and in folder create file setting.json .
          - eta create korle vs code default setting override kore .
+======================================================
+what is enviroment ? why we use?
+        Node Environmetn first e development e thake . then production e live hoy jay 
+        -> by default node development e thake
+        -> console.log(app.get('env')) //ekhane development print kore 
+        -> .env hocche cors and configuration rakhte node lage .
+        
+======================================================
+what is logger ? why we need this ?
+       -> 
+           

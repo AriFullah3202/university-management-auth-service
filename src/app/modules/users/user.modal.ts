@@ -1,9 +1,5 @@
-import { Model, Schema, model } from 'mongoose'
-import { IUser } from './user.interface'
-
-// Create a new Model type that knows about IUserMethods .
-// eita staic method use korle dite hoy
-type UserModel = Model<IUser, object>
+import { Schema, model } from 'mongoose'
+import { IUser, UserModel } from './user.interface'
 
 const userSchema = new Schema<IUser>(
   {
