@@ -91,4 +91,29 @@ auto key generate ->
              - create user.util.ts file and oi file generateUserid name e ekta function kora and export kora 
              - const currentId = (await findLastUserId()) || (0).toString().padStart(5, '0')
                const incrementedId = (parseInt(currentId) + 1).toString().padStart(5, '0')
-               -ekhane user id default 00001 theke suru hbe and next e 1 plus hoye 00002 hbe . 
+               -ekhane user id default 00001 theke suru hbe and next e 1 plus hoye 00002 hbe .
+==============================================================
+Eslint e rules improve korar
+             - .eslintrc er moddhe role diya jay .
+                "rules": {
+                   "no-unused-vars": "error",
+                   "no-console" : "error",
+                   "no-undefined" : "error",
+                   "no-unused-expressions" : "error",
+                   "no-unreachable" : "error",
+                   "consistent-type-definitions": ["error", "type"]
+                 },
+if you want to override the vscode setting in particular setting
+ create .vscode folder and in folder create file setting.json .
+         - eta create korle vs code default setting override kore .
+======================================================
+what is enviroment ? why we use?
+        Node Environmetn first e development e thake . then production e live hoy jay 
+        -> by default node development e thake
+        -> console.log(app.get('env')) //ekhane development print kore 
+        -> .env hocche cors and configuration rakhte node lage .
+        
+======================================================
+what is logger ? why we need this ?
+       -> 
+           
