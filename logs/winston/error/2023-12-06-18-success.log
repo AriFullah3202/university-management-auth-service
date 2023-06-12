@@ -1,0 +1,17 @@
+Mon Jun 12 2023 18:00:15 GMT+0600 (Bangladesh Standard Time) 18 : 0 : 15 [Arif] error: globalErrorHandler [
+  {
+    "received": "04",
+    "code": "invalid_enum_value",
+    "options": [
+      "01",
+      "02",
+      "03"
+    ],
+    "path": [
+      "body",
+      "code"
+    ],
+    "message": "Invalid enum value. Expected '01' | '02' | '03', received '04'"
+  }
+]
+Mon Jun 12 2023 18:01:12 GMT+0600 (Bangladesh Standard Time) 18 : 1 : 12 [Arif] error: globalErrorHandler Invalid Semester code

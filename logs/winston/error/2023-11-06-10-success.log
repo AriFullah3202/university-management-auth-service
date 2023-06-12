@@ -1,0 +1,24 @@
+Sun Jun 11 2023 10:03:20 GMT+0600 (Bangladesh Standard Time) 10 : 3 : 20 [Arif] error: globalErrorHandler [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "undefined",
+    "path": [
+      "body",
+      "role"
+    ],
+    "message": "role is required"
+  }
+]
+Sun Jun 11 2023 10:03:21 GMT+0600 (Bangladesh Standard Time) 10 : 3 : 21 [Arif] error: globalErrorHandler [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "undefined",
+    "path": [
+      "body",
+      "role"
+    ],
+    "message": "role is required"
+  }
+]
