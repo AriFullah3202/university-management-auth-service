@@ -11,7 +11,6 @@ const createUser: RequestHandler = catchAsync(
     const { user } = req.body;
     const result = await userService.createUser(user);
 
-    next();
     res.status(200).json({});
     sendRespose(res, {
       statusCode: httpStatus.OK,
@@ -19,6 +18,7 @@ const createUser: RequestHandler = catchAsync(
       message: 'user Created successfully',
       data: result,
     });
+    next();
   }
 );
 export default { createUser };

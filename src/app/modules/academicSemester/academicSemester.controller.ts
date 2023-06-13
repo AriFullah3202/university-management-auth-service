@@ -12,13 +12,13 @@ const createSemester: RequestHandler = catchAsync(
     const result = await AcademicSemesterService.createSemester(
       academicSemesterData
     );
-    next();
     sendRespose(res, {
       statusCode: httpStatus.OK,
       success: true,
       message: 'Academic semister Created successfully',
       data: result,
     });
+    next();
   }
 );
 export const AcademicSemesterController = { createSemester };

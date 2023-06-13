@@ -10,6 +10,8 @@
 * [Optimise Application routes and controller](#optimise-application-routes-and-controller)
 * [Optimize you try catch block and Api Response](#optimize-you-try-catch-block-and-api-response)
   * [Handle response or succes responce](#handle-response-or-succes-response)
+* [Postman e global environment set ](#postman-e-environment-e-setup-for-localhost)
+
 
 
 
@@ -960,7 +962,6 @@ const createUser: RequestHandler = catchAsync(
     const { user } = req.body;
     const result = await userService.createUser(user);
 
-    next();
     res.status(200).json({});
     sendRespose(res, {
       statusCode: httpStatus.OK,
@@ -968,9 +969,44 @@ const createUser: RequestHandler = catchAsync(
       message: 'user Created successfully',
       data: result,
     });
+      next();
   }
 );
 export default { createUser };
 ```
+## Postman e environment e setup for localhost
+first e postman e dukhe environment e click kore 
+global e click kore ekta name diye tarpor
+```bash
+http://localhost:5000 
+```
+## handle 404 url or url not found
+jodi amra app.ts and routes folder e index.ts file e route e file e uri na thakle thahole 
+404 not found thakbe
+go to 
+* src
+  * app.ts
+ei file e 
+```js
+//amara jani app.use middlewre ekta ekta execue 
+//jodi app.use 2ta thake 1ta exception de 
+// thahole 2nd exception dibe
+app.use(globalErrorHandler);
+// this middleware handle the 404 uri
+
+app.use((req: Request, res: Response, next: NextFunction) => {
+  res.status(httpStatus.NOT_FOUND).json({
+    success: false,
+    message: 'Not found',
+    errorMessage: [
+      {
+        path: req.originalUrl,
+        message: 'API not found',
+      },
+    ],
+  });
+  next();
+});
+
 
 
