@@ -104,6 +104,36 @@
             "date": 1686624438427,
             "name": "H:\\Project\\JavaScript\\university-management-auth-service\\logs\\winston\\error\\2023-13-06-08-success.log",
             "hash": "091613e359ef3937475bbb188126d8c537b0f64dad58855d77bfade50a2289ad"
+        },
+        {
+            "date": 1686668476962,
+            "name": "H:\\Project\\JavaScript\\university-management-auth-service\\logs\\winston\\error\\2023-13-06-21-success.log",
+            "hash": "ce2f5c15d9883de89be2c49b1f8cbfcd49e826828a0982533b26dd785a30a5b0"
+        },
+        {
+            "date": 1686702063779,
+            "name": "H:\\Project\\JavaScript\\university-management-auth-service\\logs\\winston\\error\\2023-14-06-06-success.log",
+            "hash": "ad3eb82ddbadfe42e344b41c35841f335e94dc7f3bf51ffe4a9e35382dc39d96"
+        },
+        {
+            "date": 1686706705161,
+            "name": "H:\\Project\\JavaScript\\university-management-auth-service\\logs\\winston\\error\\2023-14-06-07-success.log",
+            "hash": "539c9d0102c6a2038f0334b09f3c4c860d1e4147e5384568022a661946694ab4"
+        },
+        {
+            "date": 1686710571015,
+            "name": "H:\\Project\\JavaScript\\university-management-auth-service\\logs\\winston\\error\\2023-14-06-08-success.log",
+            "hash": "4b33a02872474fdcbd749f522a962017f17480b2c7834ceb5bab5d80a4fdd38a"
+        },
+        {
+            "date": 1686714854324,
+            "name": "H:\\Project\\JavaScript\\university-management-auth-service\\logs\\winston\\error\\2023-14-06-09-success.log",
+            "hash": "7d67bb63fe114a8b7a007be63cd640ff6da8bd4244b236705a07877846ef58ea"
+        },
+        {
+            "date": 1686715314597,
+            "name": "H:\\Project\\JavaScript\\university-management-auth-service\\logs\\winston\\error\\2023-14-06-10-success.log",
+            "hash": "e6f0a4e0499e329506d649fdaa917e0ff2b71f82067686c1275b0f2eef0398db"
         }
     ],
     "hashType": "sha256"
