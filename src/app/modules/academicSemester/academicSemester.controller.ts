@@ -28,14 +28,25 @@ const createSemester: RequestHandler = catchAsync(
 // get all
 const getSemisters = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    //ekhan theke pick.ts e jabe
-    // ekhane req.query er moddhe ache value and paginationfield er moddhe ache
-    // fileld
-    //const paginationOptions = pick([ekhane sob value ache], ['page', 'limit', 'sortBy', 'sortOrder'] );
-
+    /*
+    ekhan theke pick.ts e jabe
+     ekhane req.query er moddhe ache value and paginationfield er moddhe ache
+     fileld
+     const paginationOptions = pick([ekhane sob value ache], ['page', 'limit', 'sortBy', 'sortOrder'] );
+     */
     const paginatinOptions = pick(req.query, paginationField);
     logger.info(paginatinOptions);
+
+    /*
+     for dynamic searching
+     ekhan theke pick.ts e jabe
+     return korbe = 
+    */
+
+    const filters = pick(req.query, ['searchTerm', 'title', 'code', 'year']);
+
     const result = await AcademicSemesterService.getAllSemister(
+      filters,
       paginatinOptions
     );
     // app => shared => sendResponse.ts er moddhe jabe
@@ -49,5 +60,21 @@ const getSemisters = catchAsync(
     next();
   }
 );
+const getSingleSemester = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id;
 
-export const AcademicSemesterController = { createSemester, getSemisters };
+  const result = await AcademicSemesterService.getSingleSemester(id);
+
+  sendRespose<IAcademicSemester>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Semester retrieved successfully !',
+    data: result,
+  });
+});
+
+export const AcademicSemesterController = {
+  createSemester,
+  getSemisters,
+  getSingleSemester,
+};

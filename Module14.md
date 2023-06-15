@@ -5,6 +5,8 @@
   * [Implement dynamic sorting](#implement-dynamic-sorting)
     * [Dynamic pagination](#implement-dynamic-pagination)
     * [Dynamic sorting](#dynamic-sorting)
+* [Filter and searching](#filter-and-sorting)
+* [Get Single semister](#get-single-semister)
 
 
 ## Page , Limit , SortBy , SortOrder
@@ -235,6 +237,116 @@ const calculatePaginations = (option: IOption): IOptionResult => {
     .skip(skip)
     .limit(limit);
 ```
+## Filter and Sorting 
+## Dynamic Searching and filter
+
+### in AcademicSemister.controller.ts
+```js
+  /*
+    ekhan theke pick.ts e jabe
+     ekhane req.query er moddhe ache value and paginationfield er moddhe ache
+     fileld
+     const paginationOptions = pick([ekhane sob value ache], ['page', 'limit', 'sortBy', 'sortOrder'] );
+     */
+    const paginatinOptions = pick(req.query, paginationField);
+    logger.info(paginatinOptions);
+
+    /*
+     for dynamic searching
+     ekhan theke pick.ts e jabe
+     return korbe = 
+    */
+
+    const filters = pick(req.query, ['searchTerm', 'title', 'code', 'year']);
+
+    const result = await AcademicSemesterService.getAllSemister(
+      filters,
+      paginatinOptions
+    );
+
+  ```
 
 
+### in AcademicSemister.service.ts
+controller theke ekhane call ashbe
+```js
+//===================================in academicSemister.service.ts=====================
+ /* 
+  for seaching and filter
+ ekhane search er jonno filter jonno distruct kora hoyeche
+ empty andCondition e searchTerm and filter er object akare push kora hoyeche
+ andConditions e thakbe =>
+  example :  [ { '$or': [ [Object], [Object], [Object] ] } ]
+ 
+
+ */
+  const { searchTerm, ...filtersData } = filters;
+  const andConditions = [];
+  const academicSemisterSearchAbleField = ['title', 'code', 'year'];
+  if (searchTerm) {
+    andConditions.push({
+      $or: academicSemisterSearchAbleField.map(field => ({
+        [field]: {
+          $regex: searchTerm,
+          $options: 'i',
+        },
+      })),
+    });
+  }
+
+  /*
+  eirokom search dile 
+  /academic-semesters/?searchTerm=2023&title=Autumn
+  console.log(Object.keys(filtersData)); [ 'title' ]
+  console.log(Object.entries(filtersData)); [ [ 'title', 'Autumn' ] ]
+  */
+  if (Object.keys(filtersData).length) {
+    andConditions.push({
+      $and: Object.entries(filtersData).map(([field, value]) => ({
+        [field]: value,
+      })),
+    });
+  }
+  /* 
+  console.log(andConditions) [ { '$or': [ [Object], [Object], [Object] ] } ]
+  console.log(whereConditons)  { '$and': [ { '$or': [Array] } ] }
+  */
+  const whereConditons =
+    andConditions.length > 0 ? { $and: andConditions } : {};
+
+  const result = await AcademicSemester.find(whereConditons)
+    .sort(sortConditions)
+    .skip(skip)
+    .limit(limit);
+
+```
+## Get Single semister
+in router.ts
+```js
+router.get('/:id', AcademicSemesterController.getSingleSemester);
+```
+in controller.ts
+```js
+const getSingleSemester = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id;
+
+  const result = await AcademicSemesterService.getSingleSemester(id);
+
+  sendRespose<IAcademicSemester>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Semester retrieved successfully !',
+    data: result,
+  });
+});
+```
+in service.ts
+```js
+const getSingleSemester = async (
+  id: string
+): Promise<IAcademicSemester | null> => {
+  const result = await AcademicSemester.findById(id);
+  return result;
+};
+```
 
