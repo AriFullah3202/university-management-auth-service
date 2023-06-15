@@ -7,6 +7,7 @@
     * [Dynamic sorting](#dynamic-sorting)
 * [Filter and searching](#filter-and-sorting)
 * [Get Single semister](#get-single-semister)
+* [Handle Cast Error](#handle-cast-error)
 
 
 ## Page , Limit , SortBy , SortOrder
@@ -349,4 +350,42 @@ const getSingleSemester = async (
   return result;
 };
 ```
+## Handle cast error 
+### jokon amara invalid id diye access kori thahole amra pabo na castError dibe 
+for example : {{javaScript}}/academic-semesters/648ae1d1d2cb85b405ca64
+//in globalErrorHandler.ts
+```js
 
+else if (error?.name === 'CastError') {
+    const simplifiedError = handleCastError(error);
+    statusCode = simplifiedError.statusCode;
+    message = simplifiedError.message;
+    errorMessage = simplifiedError.errorMessages;
+  }
+  ```
+in handleCastError.ts
+* src
+  * error
+    * handleCastError.ts
+```js
+import mongoose from 'mongoose';
+import { IGenericErrorMessage } from '../interface/error';
+
+const handleCastError = (error: mongoose.Error.CastError) => {
+  const errors: IGenericErrorMessage[] = [
+    {
+      path: error.path,
+      message: 'Invalid Id',
+    },
+  ];
+
+  const statusCode = 400;
+  return {
+    statusCode,
+    message: 'Cast Error',
+    errorMessages: errors,
+  };
+};
+
+export default handleCastError;
+```

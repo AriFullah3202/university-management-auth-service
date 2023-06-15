@@ -6,6 +6,7 @@ import handleValidationError from '../../error/handleValidationError';
 import ApiError from '../../error/ApiError';
 import { ZodError } from 'zod';
 import handleZodError from '../../error/handleZodError';
+import handleCastError from '../../error/handleCastError';
 
 const globalErrorHandler: ErrorRequestHandler = (
   error,
@@ -33,6 +34,11 @@ const globalErrorHandler: ErrorRequestHandler = (
     statusCode = simplifiedError.statusCode;
     message = simplifiedError.message;
     errorMessage = simplifiedError.errorMessage;
+  } else if (error?.name === 'CastError') {
+    const simplifiedError = handleCastError(error);
+    statusCode = simplifiedError.statusCode;
+    message = simplifiedError.message;
+    errorMessage = simplifiedError.errorMessages;
   } else if (error instanceof ApiError) {
     // eslint-disable-next-line no-console
     console.log('hello from global');
