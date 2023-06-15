@@ -1,3 +1,4 @@
+import { SortOrder } from 'mongoose';
 import ApiError from '../../../error/ApiError';
 import { paginationHelper } from '../../../helper/paginationHelper';
 import { IGenericResponse } from '../../../interface/common';
@@ -16,14 +17,26 @@ const createSemester = async (
   const result = await AcademicSemester.create(payload);
   return result;
 };
-
+//in getAllSemister nibe ekta object {page , limit , sortBy , sortOrder}
 const getAllSemister = async (
   paginatinOptions: IPaginationOptions
 ): Promise<IGenericResponse<IAcademicSemester[]>> => {
   // src => helper => paginationHelper.ts
-  const { page, limit, skip } =
+  // amra paginationHelper maddhome amra pacchi {page , limit , skip , sortby , sortOrder}
+  const { page, limit, skip, sortBy, sortOrder } =
     paginationHelper.calculatePaginations(paginatinOptions);
-  const result = await AcademicSemester.find().sort().skip(skip).limit(limit);
+  // for sorting
+  // empty object key and value type declaration
+  const sortConditions: { [key: string]: SortOrder } = {};
+  // if er maddohome object e key and value akare data save korchi
+  if (sortBy && sortOrder) {
+    sortConditions[sortBy] = sortOrder;
+  }
+
+  const result = await AcademicSemester.find()
+    .sort(sortConditions)
+    .skip(skip)
+    .limit(limit);
   const total = await AcademicSemester.countDocuments();
 
   return {

@@ -4,6 +4,7 @@
   * [Implementation Pagination using page , limit and skip](#implementaion-pagination-using-page--limit-and-skip)
   * [Implement dynamic sorting](#implement-dynamic-sorting)
     * [Dynamic pagination](#implement-dynamic-pagination)
+    * [Dynamic sorting](#dynamic-sorting)
 
 
 ## Page , Limit , SortBy , SortOrder
@@ -177,4 +178,63 @@ in academicSemister.ts
   const { page, limit, skip } =
     paginationHelper.calculatePaginations(paginatinOptions);
 ```
+## Dynamic sorting
+* src
+  * helper
+    * paginationHelper.ts
+
+in pagingHelper.ts
+```js
+import { SortOrder } from 'mongoose';
+
+type IOption = {
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: SortOrder;
+};
+type IOptionResult = {
+  page: number;
+  limit: number;
+  skip: number;
+  sortBy : string;
+  sortOrder : string;
+};
+const calculatePaginations = (option: IOption): IOptionResult => {
+  // ekhane numbr e convert kora
+  const page = Number(option.page || 1);
+  const limit = Number(option.limit || 10);
+  const skip = (page - 1) * limit;
+  const sortBy = option.sortBy || `createdAt`;
+  const sortOrder = option.sortOrder || 'desc';
+  return {
+    page,
+    limit,
+    skip,
+    sortBy,
+    sortOrder,
+  };
+};
+
+```
+### in academicSemester.service.ts
+```js
+  // amra paginationHelper maddhome amra pacchi {page , limit , skip , sortby , sortOrder}
+  const { page, limit, skip, sortBy, sortOrder } =
+    paginationHelper.calculatePaginations(paginatinOptions);
+  // for sorting
+  // empty object key and value type declaration
+  const sortConditions: { [key: string]: SortOrder } = {};
+  // if er maddohome object e key and value akare data save korchi
+  if (sortBy && sortOrder) {
+    sortConditions[sortBy] = sortOrder;
+  }
+
+  const result = await AcademicSemester.find()
+    .sort(sortConditions)
+    .skip(skip)
+    .limit(limit);
+```
+
+
 
