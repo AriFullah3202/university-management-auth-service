@@ -10,6 +10,7 @@ import {
 import { academicSemesterTitleCodeMapper } from './academicSemester.constant';
 import { AcademicSemester } from './academicSemester.model';
 import httpStatus from 'http-status';
+import { logger } from '../../../shared/logger';
 
 const createSemester = async (
   payload: IAcademicSemester
@@ -106,11 +107,38 @@ const getAllSemister = async (
     data: result,
   };
 };
-
+// for getSingleSemister
 const getSingleSemester = async (
   id: string
 ): Promise<IAcademicSemester | null> => {
   const result = await AcademicSemester.findById(id);
+  return result;
+};
+const deleteSemester = async (
+  id: string
+): Promise<IAcademicSemester | null> => {
+  const result = await AcademicSemester.findByIdAndDelete(id);
+  return result;
+};
+// for update
+const updateSemester = async (
+  id: string,
+  payload: Partial<IAcademicSemester>
+): Promise<IAcademicSemester | null> => {
+  logger.info(
+    'from service ========================================================================================'
+  );
+
+  if (
+    payload.title &&
+    payload.code &&
+    academicSemesterTitleCodeMapper[payload.title] !== payload.code
+  ) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid Semester Code');
+  }
+  const result = await AcademicSemester.findOneAndUpdate({ _id: id }, payload, {
+    new: true,
+  });
   return result;
 };
 
@@ -118,4 +146,6 @@ export const AcademicSemesterService = {
   createSemester,
   getAllSemister,
   getSingleSemester,
+  updateSemester,
+  deleteSemester,
 };

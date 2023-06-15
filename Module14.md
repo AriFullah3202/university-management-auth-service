@@ -8,6 +8,7 @@
 * [Filter and searching](#filter-and-sorting)
 * [Get Single semister](#get-single-semister)
 * [Handle Cast Error](#handle-cast-error)
+* [Update Academic semister using zod validation](#update-academic-semister-using-zod-validation)
 
 
 ## Page , Limit , SortBy , SortOrder
@@ -306,7 +307,7 @@ controller theke ekhane call ashbe
       $and: Object.entries(filtersData).map(([field, value]) => ({
         [field]: value,
       })),
-    });
+    });s
   }
   /* 
   console.log(andConditions) [ { '$or': [ [Object], [Object], [Object] ] } ]
@@ -388,4 +389,163 @@ const handleCastError = (error: mongoose.Error.CastError) => {
 };
 
 export default handleCastError;
+```
+## Update Academic semister using zod validation
+in route.ts
+```js
+router.patch(
+  '/:id',
+  validateRequest(AcademicSemesterValidation.updateAcademicSemesterZodSchema),
+  AcademicSemesterController.updateSemester
+);
+```
+#### ekhan theke validateRequest.ts e call jabe
+```js
+// in validateRequest.ts
+const validateRequest =
+  (schema: AnyZodObject | ZodEffects<AnyZodObject>) =>
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    logger.info(
+      'hello for validate request ekhan theke user.validation e jabe'
+    );
+    try {
+      await schema.parseAsync({
+        body: req.body,
+        query: req.query,
+        params: req.params,
+        cookies: req.cookies,
+      });
+      return next();
+    } catch (error) {
+      next(error);
+    }
+  };
+export default validateRequest;
+```
+#### validateRequest ki accept korbe
+
+academicSemister.validation.ts er function 
+updateAcademicSemesterZodSchema method validateRequest recieve korbe 
+
+```js
+/*
+optional()
+ei method update korte o paro abar na korte o paro
+*/
+const updateAcademicSemesterZodSchema = z
+  .object({
+    body: z.object({
+      title: z
+        .enum([...academicSemesterTitles] as [string, ...string[]], {
+          required_error: 'Title is required',
+        })
+        .optional(),
+      year: z
+        .string({
+          required_error: 'Year is required ',
+        })
+        .optional(),
+      code: z
+        .enum([...academicSemesterCodes] as [string, ...string[]])
+        .optional(),
+      startMonth: z
+        .enum([...academicSemesterMonths] as [string, ...string[]], {
+          required_error: 'Start month is needed',
+        })
+        .optional(),
+      endMonth: z
+        .enum([...academicSemesterMonths] as [string, ...string[]], {
+          required_error: 'End month is needed',
+        })
+        .optional(),
+    }),
+  })
+  .refine(
+    data =>
+      (data.body.title && data.body.code) ||
+      (!data.body.title && !data.body.code),
+    {
+      message: 'Either both title and code should be provided or neither',
+    }
+  );
+  
+/*
+
+  .refine(
+    data =>
+      (data.body.title && data.body.code) ||
+      (!data.body.title && !data.body.code),
+    {
+      message: 'Either both title and code should be provided or neither',
+    }
+  );
+  ekane refine mane nijer moto kore likha 
+ ekane amra bolchi jodi title and code update korle 2ta den na hoy 2ta update korbe na 1ta error mesage ta dekhabe
+*/
+
+  ```
+  #### service.ts
+  ```js
+const updateSemester = async (
+  id: string,
+  payload: Partial<IAcademicSemester>
+): Promise<IAcademicSemester | null> => {
+  if (
+    payload.title &&
+    payload.code &&
+    academicSemesterTitleCodeMapper[payload.title] !== payload.code
+  ) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid Semester Code');
+  }
+  const result = await AcademicSemester.findOneAndUpdate({ _id: id }, payload, {
+    new: true,
+  });
+  return result;
+};
+```  
+#### in controller
+
+```js
+
+const updateSemester = catchAsync(async (req: Request, res: Response) => {
+  logger.info(
+    'from controller ========================================================================================'
+  );
+  const id = req.params.id;
+  const updatedData = req.body;
+  const result = await AcademicSemesterService.updateSemester(id, updatedData);
+
+  sendRespose<IAcademicSemester>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Semester retrieved successfully !',
+    data: result,
+  });
+});
+
+```
+## Delete academic semister
+in router.ts
+```js
+router.delete('/:id', AcademicSemesterController.deleteSemister);
+// in controller
+const deleteSemister = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id;
+
+  const result = await AcademicSemesterService.deleteSemester(id);
+
+  sendRespose<IAcademicSemester>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Semester delete successfully !',
+    data: result,
+  });
+});
+// in service 
+const deleteSemester = async (
+  id: string
+): Promise<IAcademicSemester | null> => {
+  const result = await AcademicSemester.findByIdAndDelete(id);
+  return result;
+};
 ```
