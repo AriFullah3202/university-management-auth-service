@@ -1,5 +1,8 @@
-## Table of 
+## Table 
+* [project setup](#project-setup)
+  * [create folder](#create-folder-for-project)
 * [Module13 Project description](./Module13.md)
+* [Module14 project description](./Module14.md)
 * [Setup logger](#setup-logger-for-winston-and-winston-daily-rotate-file)
   * [File create](#file-create)
   * [useage](#useage)
@@ -7,6 +10,38 @@
 * [Error handling method in structure](#optimize-error-handling-method-structure)
 * [Common error pattern for frontend Developer](#common-error-pattern-for-frontend-developer)
 * [Create handleValidationError handler](#create-handlevalidationerror-handler)
+
+
+## project setup
+to setup typescript and express
+
+```bash
+yarn init
+```
+```bash
+yarn add typescript --dev
+```
+```bash
+yarn add mongoose express dotenv cors
+```
+```bash
+yarn add -D typescript
+```
+```bash
+tsc --init
+```
+## create folder for project
+in tsconfig.json
+for example :   "rootDir": "./src",
+                 "outDir": "./dist",
+create folder for .env and .gitignore
+* .env
+* .gitignore
+in gitignore file
+```js
+node_modules
+.env
+```
 
 
 ## Setup logger for winston and winston-daily-rotate-file

@@ -1,0 +1,4 @@
+Mon Jun 12 2023 16:36:30 GMT+0600 (Bangladesh Standard Time) 16 : 36 : 30 [Arif] error: globalErrorHandler E11000 duplicate key error collection: university-managemet.academicsemesters index: title_1 dup key: { title: "Autumn" }
+Mon Jun 12 2023 16:37:41 GMT+0600 (Bangladesh Standard Time) 16 : 37 : 41 [Arif] error: globalErrorHandler Academic semester is alreadey exits
+Mon Jun 12 2023 16:37:47 GMT+0600 (Bangladesh Standard Time) 16 : 37 : 47 [Arif] error: globalErrorHandler Academic semester is alreadey exits
+Mon Jun 12 2023 16:37:49 GMT+0600 (Bangladesh Standard Time) 16 : 37 : 49 [Arif] error: globalErrorHandler Academic semester is alreadey exits
