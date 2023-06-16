@@ -1,6 +1,7 @@
 ## Table 
 * [project setup](#project-setup)
   * [create folder](#create-folder-for-project)
+  * [deploy to vercel](#)
 * [Module13 Project description](./Module13.md)
 * [Module14 project description](./Module14.md)
 * [Setup logger](#setup-logger-for-winston-and-winston-daily-rotate-file)
@@ -22,10 +23,11 @@ yarn init
 yarn add typescript --dev
 ```
 ```bash
-yarn add mongoose express dotenv cors
+yarn add mongoose express dotenv cors http-status
+yarn add ts-node-dev --dev
 ```
 ```bash
-yarn add -D typescript
+yarn add -D typescript @types/express @types/cors
 ```
 ```bash
 tsc --init
@@ -35,6 +37,11 @@ in tsconfig.json
 for example :   "rootDir": "./src",
                  "outDir": "./dist",
 create folder for .env and .gitignore
+* src
+  * config -> folder
+    * index.ts  -> file
+  * app.ts
+  * server.ts
 * .env
 * .gitignore
 in gitignore file
@@ -42,7 +49,68 @@ in gitignore file
 node_modules
 .env
 ```
+in .env file
+```bash
+PORT = 5000
+DATABASE_URL=mongodb://127.0.0.1:27017/university-managemet
+DEFAULT_PASSWORD = Admin3202
+```
+## deploy to vercel
+* first 
+* yarn build
+* create vercel.jeson
+```bash
+vercel --version //if vercel 
+// not install
+yarn i -g vercel@latest
+vercel --version
+vercel login
+//then
+vercel
+#then answer the question
+y
+# then 
+enter
+# then
+no 
+# then 
+no
+# then 
+./
+#then 
+if you change project build again
+#then 
+yarn buil
+vercel --prod
+```
+in package.json
+```json
 
+ "scripts": {
+    "dev": "tsnd --respawn src/server.ts",
+    "start": "node dist/server.js",
+    "build" : "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  
+  in vercel.json
+  {
+    "version": 2,
+    "builds": [
+      {
+        "src": "dist/server.js",
+        "use": "@vercel/node"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "dist/server.js"
+      }
+    ]
+  }
+
+```
 
 ## Setup logger for winston and winston-daily-rotate-file
 ---
@@ -59,6 +127,8 @@ first src folder then shared folder then file
 * src
   * shared
     * logger.ts
+
+
 
 ## useage
 
