@@ -75,7 +75,6 @@ const deleteDepartment = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
-
 export const AcademicDepartmentController = {
   getAllDepartments,
   getSingleDepartment,

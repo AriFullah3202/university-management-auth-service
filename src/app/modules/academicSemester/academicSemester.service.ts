@@ -88,6 +88,20 @@ const getAllSemister = async (
   console.log(whereConditons)
   { '$and': [ { '$or': [Array] } ] }
 
+  const academicSemisterSearchAbleField = ["location"];
+  if (searchTerm) { 
+    andConditions.push({
+      $or: academicSemisterSearchAbleField.map((field) => ({
+        [field]: {
+          $regex: searchTerm,
+          $options: "i",
+        },
+      })),
+    });
+  }
+
+
+
   */
   const whereConditons =
     andConditions.length > 0 ? { $and: andConditions } : {};

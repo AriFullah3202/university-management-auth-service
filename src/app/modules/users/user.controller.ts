@@ -1,24 +1,25 @@
-import { NextFunction, Request, RequestHandler, Response } from 'express';
-import userService from './user.service';
+import { Request, RequestHandler, Response } from 'express';
+
 import catchAsync from '../../../shared/catchAsync';
 import sendRespose from '../../../shared/sendResponse';
 import httpStatus from 'http-status';
+import { UserService } from './user.service';
+import { IUser } from './user.interface';
 
-//import { logger } from '../../../shared/logger'
+const createStudent: RequestHandler = catchAsync(
+  async (req: Request, res: Response) => {
+    const { student, ...userData } = req.body;
+    const result = await UserService.createStudent(student, userData);
 
-const createUser: RequestHandler = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { user } = req.body;
-    const result = await userService.createUser(user);
-
-    res.status(200).json({});
-    sendRespose(res, {
+    sendRespose<IUser>(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: 'user Created successfully',
+      message: 'user created successfully!',
       data: result,
     });
-    next();
   }
 );
-export default { createUser };
+
+export const UserController = {
+  createStudent,
+};

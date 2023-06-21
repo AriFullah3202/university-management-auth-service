@@ -1,5 +1,5 @@
 import { SortOrder } from 'mongoose';
-import { paginationHelpers } from '../../../helper/paginationHelper';
+
 import { IGenericResponse } from '../../../interface/common';
 import { IPaginationOptions } from '../../../interface/pagination';
 import { academicDepartmentSearchableFields } from './academicDepartment.constants';
@@ -8,13 +8,14 @@ import {
   IAcademicDepartmentFilters,
 } from './academicDepartment.interface';
 import { AcademicDepartment } from './academicDepartment.model';
+import { paginationHelper } from '../../../helper/paginationHelper';
 
 const getAllDepartments = async (
   filters: IAcademicDepartmentFilters,
   paginationOptions: IPaginationOptions
 ): Promise<IGenericResponse<IAcademicDepartment[]>> => {
   const { limit, page, skip, sortBy, sortOrder } =
-    paginationHelpers.calculatePagination(paginationOptions);
+    paginationHelper.calculatePaginations(paginationOptions);
 
   const { searchTerm, ...filtersData } = filters;
 
