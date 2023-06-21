@@ -19,6 +19,8 @@ const createStudent = async (
   if (!user.password) {
     user.password = config.defaultPassword as string;
   }
+  // hash password
+
   // set role
   user.role = 'student';
 
