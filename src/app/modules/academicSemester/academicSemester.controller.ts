@@ -35,7 +35,6 @@ const getSemisters = catchAsync(
      const paginationOptions = pick([ekhane sob value ache], ['page', 'limit', 'sortBy', 'sortOrder'] );
      */
     const paginatinOptions = pick(req.query, paginationField);
-    logger.info(paginatinOptions);
 
     /*
      for dynamic searching

@@ -18,8 +18,8 @@ export type IAcademicSemesterCodes = '01' | '02' | '03';
 
 export type IAcademicSemester = {
   title: IAcademicSemesterTitles;
-  year: string;
-  code: IAcademicSemesterCodes;
+  year: string | undefined;
+  code: IAcademicSemesterCodes | undefined;
   startMonth: IAcademicSemesterMonths;
   endMonth: IAcademicSemesterMonths;
 };

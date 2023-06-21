@@ -1,14 +1,16 @@
 import express from 'express';
-import userController from './user.controller';
 import validateRequest from '../../middlewares/validateRequest';
+import { UserController } from './user.controller';
 import { UserValidation } from './user.validation';
-
 const router = express.Router();
 
 router.post(
-  '/create-user',
-  validateRequest(UserValidation.createUserZodScheme),
-  userController.createUser
+  '/create-student',
+  validateRequest(UserValidation.createUserZodSchema),
+  UserController.createStudent
 );
 
-export const UserRoute = router;
+//create faculty
+
+//create admin
+export const UserRoutes = router;
