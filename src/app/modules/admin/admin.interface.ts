@@ -1,4 +1,5 @@
 import { Model, Types } from 'mongoose';
+import { IManagementDepartment } from '../managementDepartment/managementDepartment.interface';
 
 export type UserName = {
   firstName: string;
@@ -19,7 +20,7 @@ export type IAdmin = {
   presentAddress?: string;
   bloodGroup?: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-';
 
-  managementDepartment: Types.ObjectId;
+  managementDepartment: Types.ObjectId | IManagementDepartment;
   designation: string;
 };
 
