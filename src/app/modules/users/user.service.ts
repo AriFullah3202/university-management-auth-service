@@ -28,6 +28,7 @@ const createStudent = async (
   if (!user.password) {
     user.password = config.defaultPassword as string;
   }
+
   // set role
   user.role = 'student';
 
@@ -99,6 +100,7 @@ const createFaculty = async (
   if (!user.password) {
     user.password = config.defaultPassword as string;
   }
+
   // set role
   user.role = 'faculty';
 
@@ -159,6 +161,7 @@ const createAdmin = async (
   if (!user.password) {
     user.password = config.defaultPassword as string;
   }
+
   // set role
   user.role = 'admin';
 
