@@ -496,3 +496,112 @@ Authentication mane hocche ==> user verify kina check kora
 Authorization mane hocche ===> kake kon resouce e access diya hbe for example : 
       kono route ki admin access pabe naki faculty access pabe check kora
 
+Auth middleware ===> ekta auth middleware banabo ... jaita check korbe kon role?
+create a enum for role 
+* enum
+  * user.js
+```js
+/* eslint-disable no-unused-vars */
+export enum ENUM_USER_ROLE {
+  SUPER_ADMIN = 'super_admin',
+  ADMIN = 'admin',
+  STUDENT = 'student',
+  FACULTY = 'faculty',
+}
+
+```
+route er moddhe evabe likhte hbe
+for example 
+```js
+const router = express.Router();
+
+router.post(
+  '/create-faculty',
+  validateRequest(AcademicFacultyValidation.createFacultyZodSchema),
+  auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
+  AcademicFacultyController.createFaculty
+);
+
+router.get(
+  '/:id',
+  auth(
+    ENUM_USER_ROLE.SUPER_ADMIN,
+    ENUM_USER_ROLE.ADMIN,
+    ENUM_USER_ROLE.FACULTY,
+    ENUM_USER_ROLE.STUDENT
+  ),
+  AcademicFacultyController.getSingleFaculty
+);
+
+router.patch(
+  '/:id',
+  validateRequest(AcademicFacultyValidation.updatefacultyZodSchema),
+  auth(
+    ENUM_USER_ROLE.SUPER_ADMIN,
+    ENUM_USER_ROLE.ADMIN,
+    ENUM_USER_ROLE.FACULTY
+  ),
+  AcademicFacultyController.updateFaculty
+);
+
+router.delete(
+  '/:id',
+  auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
+  AcademicFacultyController.deleteFaculty
+);
+
+router.get(
+  '/',
+  auth(
+    ENUM_USER_ROLE.SUPER_ADMIN,
+    ENUM_USER_ROLE.ADMIN,
+    ENUM_USER_ROLE.STUDENT
+  ),
+  AcademicFacultyController.getAllFaculties
+);
+
+export const AcademicFacultyRoutes = router;
+
+```
+upore auth middleware banate hbe 
+auth.ts e call dite hbe
+for example :
+```js
+import { NextFunction, Request, Response } from 'express';
+import httpStatus from 'http-status';
+import { Secret } from 'jsonwebtoken';
+import config from '../../config';
+import ApiError from '../../error/ApiError';
+import { jwtHelpers } from '../../helper/jwtHelpers';
+
+const auth =
+  (...requiredRoles: string[]) =>
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      //get authorization token
+      const token = req.headers.authorization;
+      if (!token) {
+        throw new ApiError(httpStatus.UNAUTHORIZED, 'You are not authorized');
+      }
+      // verify token
+      let verifiedUser = null;
+
+      verifiedUser = jwtHelpers.verifyToken(token, config.jwt.secret as Secret);
+      //interface folder er moddhe index.d.ts file e
+      req.user = verifiedUser; // role , userid
+
+      // role diye guard korar jnno
+      if (requiredRoles.length && !requiredRoles.includes(verifiedUser.role)) {
+        throw new ApiError(httpStatus.FORBIDDEN, 'Forbidden');
+      }
+      next();
+    } catch (error) {
+      next(error);
+    }
+  };
+
+export default auth;
+```
+ekhane 591 number line error ache 
+reqest er moddhe user ta nai .  javascript e requsest e moddhe user thake na 
+eijonno ekta file korte hbe request er moddhe user k append korbo
