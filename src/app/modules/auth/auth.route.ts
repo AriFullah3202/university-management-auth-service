@@ -10,6 +10,11 @@ router.post(
   validateRequest(AuthValidation.loginZodSchema),
   AuthController.logInUser
 );
+router.post(
+  '/refresh-token',
+  validateRequest(AuthValidation.refreshTokenZodSchema),
+  AuthController.refreshToken
+);
 // router.get('/', AdminController.getAllAdmins);
 
 // router.delete('/:id', AdminController.deleteAdmin);

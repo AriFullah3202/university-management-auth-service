@@ -4,10 +4,14 @@ import cors from 'cors';
 import globalErrorHandler from './app/middlewares/golobalErrorHandler';
 import router from './routes';
 import httpStatus from 'http-status';
+import cookieParser from 'cookie-parser';
+
 //import ApiError from './error/ApiError'
 
 const app: Application = express();
 app.use(cors());
+// cookies parser
+app.use(cookieParser());
 //parser
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

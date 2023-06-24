@@ -1,0 +1,5 @@
+Fri Jun 23 2023 19:16:28 GMT+0600 (Bangladesh Standard Time) 19 : 16 : 28 [Arif] error: globalErrorHandler E11000 duplicate key error collection: university-management.students index: email_1 dup key: { email: "marifullah@gmail.com" }
+Fri Jun 23 2023 19:17:00 GMT+0600 (Bangladesh Standard Time) 19 : 17 : 0 [Arif] error: globalErrorHandler E11000 duplicate key error collection: university-management.students index: contactNo_1 dup key: { contactNo: "83883" }
+Fri Jun 23 2023 19:18:15 GMT+0600 (Bangladesh Standard Time) 19 : 18 : 15 [Arif] error: globalErrorHandler E11000 duplicate key error collection: university-management.students index: contactNo_1 dup key: { contactNo: "83883" }
+Fri Jun 23 2023 19:36:11 GMT+0600 (Bangladesh Standard Time) 19 : 36 : 11 [Arif] error: globalErrorHandler Password is incorrect
+Fri Jun 23 2023 19:36:43 GMT+0600 (Bangladesh Standard Time) 19 : 36 : 43 [Arif] error: globalErrorHandler User does not exit

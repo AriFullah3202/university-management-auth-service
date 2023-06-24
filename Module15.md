@@ -4,14 +4,17 @@
 * [create instance method for better coding](#create-instance-method-for-better-coding)
 or
 * [create static method for better coding](#creating-static-method-for-better-coding)
-
+* [creating Access token and refress token](#creating-access-token-and-refresh-token)
+* [set refresh token into cookie](#set-refresh-token-into-cookie)
 
 ## Hash your Password using bcrypt
+## download jwt
 first download bcrypt
 ```bash
 yarn add bcrypt
 yarn add @types/bcrypt
-
+yarn add jsonwebtoken @types/jsonwebtoken
+yarn add cookie-parser @types/cookie-parser
 ```
 for student , faculty and admin use bycrypt passowrod
 * user.service.ts
@@ -244,7 +247,252 @@ userSchema.statics.isPasswordMatched = async function (
   return await bcrypt.compare(givenPassword, savedPassword);
 };
 ```
+## creating Access token and Refresh token
+Access token hocche one time token
+refresh token hocche parmenent token
+Access token short time er jonno 
+and refresh token hocche long time er jonno
+jokhon login korbo thokon ekta access token and refresh token diya hbe
+Access token time kom thakbe , and refresh token er time beshi hbe 
+Access token er madhome amra private resourse access korte parbo
+Access token er time kichu somoy por chole jabe 
+tokon refresh token er madhome new access token create kora hbe for example :  /refresh 
+* [download jwt for node](#download-jwt)
+in env 
+```js
+JWT_SECRET = 'very secret'
+JWT_EXPIRES = 1d
+JWT_REFRESH_SECRET = 'very-refresh-secret'
+JWT_rEFRESH_EXPIRES = 365d
 
+```
+in cofig import this
+```js
+  bycrypt_salt_round: process.env.BCRYPT_SALT_ROUND,
+  jwt: {
+    secret: process.env.JWT_SECRET,
+    expires_in: process.env.JWT_EXPIRES,
+    refresh_secret: process.env.JWT_REFRESH_SECRET,
+    refresh_expires_in: process.env.JWT_rEFRESH_EXPIRES,
+  },
+``` 
+create a jwt helper 
+* helper
+  * jwtHelper.ts
+```js
+import jwt, { JwtPayload, Secret } from 'jsonwebtoken';
 
+const createToken = (
+  payload: Record<string, unknown>,
+  secret: Secret,
+  expireTime: string
+): string => {
+  return jwt.sign(payload, secret, {
+    expiresIn: expireTime,
+  });
+};
 
+const verifyToken = (token: string, secret: Secret): JwtPayload => {
+  return jwt.verify(token, secret) as JwtPayload;
+};
+
+export const jwtHelpers = {
+  createToken,
+  verifyToken,
+};
+```
+call the jwt helper 
+```js
+
+const loginUser = async (payload: ILoginUser): Promise<ILoginUserResponse> => {
+  const { id, password } = payload;
+  const isUserExist = await User.isUserExist(id);
+  if (!isUserExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User does not exit');
+  }
+  // not match the password
+  if (
+    isUserExist.password &&
+    !(await User.isPasswordMatched(password, isUserExist.password))
+  ) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Password is incorrect');
+  }
+  //create access token & refresh token
+
+  const { id: userId, role, needsPasswordChange } = isUserExist;
+  const accessToken = jwtHelpers.createToken(
+    { userId, role },
+    config.jwt.secret as Secret,
+    config.jwt.expires_in as string
+  );
+
+  const refreshToken = jwtHelpers.createToken(
+    { userId, role },
+    config.jwt.refresh_secret as Secret,
+    config.jwt.refresh_expires_in as string
+  );
+  // return the accestoken , refreshToken ,
+  // needspasswordChange into the controller
+  return {
+    accessToken,
+    refreshToken,
+    needsPasswordChange,
+  };
+};
+// use the interface
+// auth.interface.ts
+export type ILoginUserResponse = {
+  accessToken: string;
+  refreshToken: string;
+  needsPasswordChange: boolean;
+};
+
+```
+accesToken ekta short time e expire hoye jabe
+er jonne refreshToken er help nite hbe
+er jonne jokhon /login click hbe thokon refresh token ekta server e cookie te save korte hbe
+refresh token browser er storage e save korte hbe
+## set refresh token into cookie
+ei porjonto amra amader server k secure korte pari ni
+because amra refresh token k client side patacchi
+simple vabe bolte gele
+accesstoken ta sudhu matro resource access korte lagbe and refresh token
+refrshToken ta notun accesstoken anar jonno or create korar jonno kaje lage
+refresh token client side er cookie te store korbo
+#### in auth.controller.ts
+#### ekhane cokie save hbe porthi request e cookies ta pabo . eita test korte je kono controller e 
+req.cookies likhte hbe
+```js
+const logInUser = catchAsync(async (req: Request, res: Response) => {
+  const { ...loginData } = req.body;
+  const result = await AuthService.loginUser(loginData);
+  const { refreshToken, ...others } = result;
+
+  const cookiesOptions = {
+    secure: config.env === 'production',
+    httpOnly: true,
+  };
+  res.cookie('refeshToken', refreshToken, cookiesOptions);
+
+  sendRespose<ILoginUserResponse>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'User login successfully',
+    data: others,
+  });
+});
+
+```
+* [now dowload the cookies parser](#download-jwt)
+in app.ts
+```js
+// cookies parser
+app.use(cookieParser());
+```
+now any contorller see the refresh token from any controller 
+so , to see use 
+amra upre cookies er moddhe refresh token save korlam . 
+because refesh token we can not send to client every request . we only send access token
+jokhon kono request patabo browser automatic cokes er maddhome refresh token patabe .
+```js
+  console.log(req.cookies, 'cooookies');
+```
+## now create a refresh token handler
+
+in auth.route.ts
+```js
+router.post(
+  '/refresh-token',
+  validateRequest(AuthValidation.refreshTokenZodSchema),
+  AuthController.refreshToken
+);
+```
+route theke validation e jabe
+in auth.validation.ts
+```js
+const refreshTokenZodSchema = z.object({
+  cookies: z.object({
+    refreshToken: z.string({
+      required_error: 'Refresh Token is required',
+    }),
+  }),
+});
+```
+uporer validation true hole controller e jabe
+in auth.controller.ts
+```js
+const refreshToken = catchAsync(async (req: Request, res: Response) => {
+  const { refreshToken } = req.cookies;
+
+  const result = await AuthService.refreshToken(refreshToken);
+
+  // set refresh token into cookie
+
+  const cookieOptions = {
+    secure: config.env === 'production',
+    httpOnly: true,
+  };
+
+  res.cookie('refreshToken', refreshToken, cookieOptions);
+
+  sendRespose<IRefreshTokenResponse>(res, {
+    statusCode: 200,
+    success: true,
+    message: 'User lohggedin successfully !',
+    data: result,
+  });
+});
+```
+controller theke service e jabe
+in auth.service.ts e jabe
+```js
+const refreshToken = async (token: string): Promise<IRefreshTokenResponse> => {
+  //verify token
+  // invalid token - synchronous
+  let verifiedToken = null;
+  try {
+    verifiedToken = jwtHelpers.verifyToken(
+      token,
+      config.jwt.refresh_secret as Secret
+    );
+  } catch (err) {
+    throw new ApiError(httpStatus.FORBIDDEN, 'Invalid Refresh Token');
+  }
+
+  const { userId } = verifiedToken;
+
+  // tumi delete hye gso  kintu tumar refresh token ase
+  // checking deleted user's refresh token
+
+  const isUserExist = await User.isUserExist(userId);
+  if (!isUserExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User does not exist');
+  }
+  //generate new token
+
+  const newAccessToken = jwtHelpers.createToken(
+    {
+      id: isUserExist.id,
+      role: isUserExist.role,
+    },
+    config.jwt.secret as Secret,
+    config.jwt.expires_in as string
+  );
+
+  return {
+    accessToken: newAccessToken,
+  };
+};
+```
+ekhan theke jwtHelper.ts e file e jabe
+```js
+const verifyToken = (token: string, secret: Secret): JwtPayload => {
+  return jwt.verify(token, secret) as JwtPayload;
+};
+```
+
+## authentication and authorization auth middleware
+Authentication mane hocche ==> user verify kina check kora
+Authorization mane hocche ===> kake kon resouce e access diya hbe for example : 
+      kono route ki admin access pabe naki faculty access pabe check kora
 
