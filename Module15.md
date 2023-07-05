@@ -6,6 +6,7 @@ or
 * [create static method for better coding](#creating-static-method-for-better-coding)
 * [creating Access token and refress token](#creating-access-token-and-refresh-token)
 * [set refresh token into cookie](#set-refresh-token-into-cookie)
+* [Change Password and Forgot Password](#change-password)
 
 ## Hash your Password using bcrypt
 ## download jwt
@@ -289,7 +290,7 @@ const createToken = (
 ): string => {
   return jwt.sign(payload, secret, {
     expiresIn: expireTime,
-  });
+  });p-
 };
 
 const verifyToken = (token: string, secret: Secret): JwtPayload => {
@@ -605,3 +606,154 @@ export default auth;
 ekhane 591 number line error ache 
 reqest er moddhe user ta nai .  javascript e requsest e moddhe user thake na 
 eijonno ekta file korte hbe request er moddhe user k append korbo
+
+অবশ্যই ফোল্ডার ক্রিয়েট করতে হবে 
+* src
+  * types 
+    * express
+      * index.d.ts
+
+```js
+import { JwtPayload } from 'jsonwebtoken';
+declare global {
+  namespace Express {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+    interface Request {
+      user: JwtPayload | null;
+    }
+  }
+}
+```
+
+ in tsconfig.json
+```js
+"typeRoots" : ["./src/types", "./node_modules/@types"],
+```
+## Change Password
+
+### রাউট , কনট্রোলার ,ভ্যলিডেশন , সার্ভিস , পরিবর্তন করতে হবে 
+```js
+// auth.route.ts
+
+router.post(
+  '/change-password',
+  validateRequest(AuthValidation.refreshTokenZodSchema),
+  AuthController.changePassword
+);
+// auth.validation.ts
+const changePasswordZodSchema = z.object({
+  body: z.object({
+    oldPassword: z.string({
+      required_error: 'Old password is required',
+    }),
+    NewPassword: z.string({
+      required_error: 'New Password is required',
+    }),
+  }),
+});
+// auth.controller.ts
+const changePassword = catchAsync(async (req: Request, res: Response) => {
+  const { ...passwordData } = req.body;
+  const user = req.user;
+
+  const result = await AuthService.loginUser(passwordData, user);
+
+  sendRespose<IRefreshTokenResponse>(res, {
+    statusCode: 200,
+    success: true,
+    message: 'User lohggedin successfully !',
+    data: result,
+  });
+});
+//auth.interface.ts
+export type IchangePassword = {
+  newPassword: string;
+  oldPassword: string;
+};
+// auth.service.ts
+const changePassword = async (
+  payload: IchangePassword,
+  user: JwtPayload | null | undefined
+): Promise<void> => {
+  const { oldPassword, newPassword } = payload;
+  // checking user exits
+  const isUserExist = User.isUserExist(user?.userId);
+
+  if (!isUserExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User does not exit');
+  }
+
+  // checking old password
+  if (
+    (await isUserExist).password &&
+    !(await User.isPasswordMatched(oldPassword, (await isUserExist).password))
+  ) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Password is incorrect');
+  }
+
+  //hash passwod before saving
+  // হেশ পাসওয়ার্ড দুইটা আগুমেন্ট নিবে । কাকে হ্যাশ করতে চাই এবং হ্যাশটা কতটা নাম্বারের হবে /
+  const newHashPassword = await bcrypt.hash(
+    newPassword,
+    Number(config.bycrypt_salt_round)
+  );
+  const query = { id: user?.userId };
+  //updated data
+  const updatedData = {
+    password: newHashPassword,
+    needsPasswordChange: false,
+    passwordChangedAt: new Date(),
+  };
+  // now update the password to the database
+  await User.findOneAndUpdate(query, updatedData);
+};
+
+//user.model.ts
+const userSchema = new Schema<IUser, Record<string, never>>(
+  {
+    id: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    role: {
+      type: String,
+      required: true,
+    },
+    password: {
+      type: String,
+      required: true,
+      select: 0,
+    },
+    needsPasswordChange: {
+      type: Boolean,
+      default: true,
+    },
+    passwordChangedAt: {
+      type: Date,
+    },
+    student: {
+      type: Schema.Types.ObjectId,
+      ref: 'Student',
+    },
+    faculty: {
+      type: Schema.Types.ObjectId,
+      ref: 'Faculty',
+    },
+    admin: {
+      type: Schema.Types.ObjectId,
+      ref: 'Admin',
+    },
+  },
+  {
+    timestamps: true,
+    toJSON: {
+      virtuals: true,
+    },
+  }
+);
+
+
+
+```
+

@@ -18,6 +18,7 @@ const auth =
       let verifiedUser = null;
 
       verifiedUser = jwtHelpers.verifyToken(token, config.jwt.secret as Secret);
+
       //interface folder er moddhe index.d.ts file e
       req.user = verifiedUser; // role , userid
 

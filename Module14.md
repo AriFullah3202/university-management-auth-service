@@ -549,3 +549,4 @@ const deleteSemester = async (
   return result;
 };
 ```
+

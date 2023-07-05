@@ -4,11 +4,13 @@ import {
   ILoginUser,
   ILoginUserResponse,
   IRefreshTokenResponse,
+  IchangePassword,
 } from './auth.interface';
 import { User } from '../users/user.modal';
 import config from '../../../config';
-import { Secret } from 'jsonwebtoken';
+import { JwtPayload, Secret } from 'jsonwebtoken';
 import { jwtHelpers } from '../../../helper/jwtHelpers';
+import bcrypt from 'bcrypt';
 
 const loginUser = async (payload: ILoginUser): Promise<ILoginUserResponse> => {
   const { id, password } = payload;
@@ -31,8 +33,10 @@ const loginUser = async (payload: ILoginUser): Promise<ILoginUserResponse> => {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Password is incorrect');
   */
 
-  /*creating static of user
-  access to our static methods */
+  /*
+  creating static of user
+  access to our static methods 
+  */
   const isUserExist = await User.isUserExist(id);
 
   // check the user exits
@@ -66,6 +70,43 @@ const loginUser = async (payload: ILoginUser): Promise<ILoginUserResponse> => {
     refreshToken,
     needsPasswordChange,
   };
+};
+
+const changePassword = async (
+  payload: IchangePassword,
+  user: JwtPayload | null | undefined
+): Promise<void> => {
+  const { oldPassword, newPassword } = payload;
+  // checking user exits
+  const isUserExist = User.isUserExist(user?.userId);
+
+  if (!isUserExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User does not exit');
+  }
+
+  // checking old password
+  if (
+    (await isUserExist).password &&
+    !(await User.isPasswordMatched(oldPassword, (await isUserExist).password))
+  ) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Password is incorrect');
+  }
+
+  //hash passwod before saving
+  // হেশ পাসওয়ার্ড দুইটা আগুমেন্ট নিবে । কাকে হ্যাশ করতে চাই এবং হ্যাশটা কতটা নাম্বারের হবে /
+  const newHashPassword = await bcrypt.hash(
+    newPassword,
+    Number(config.bycrypt_salt_round)
+  );
+  const query = { id: user?.userId };
+  //updated data
+  const updatedData = {
+    password: newHashPassword,
+    needsPasswordChange: false,
+    passwordChangedAt: new Date(),
+  };
+  // now update the password to the database
+  await User.findOneAndUpdate(query, updatedData);
 };
 
 const refreshToken = async (token: string): Promise<IRefreshTokenResponse> => {
@@ -106,4 +147,4 @@ const refreshToken = async (token: string): Promise<IRefreshTokenResponse> => {
   };
 };
 
-export const AuthService = { loginUser, refreshToken };
+export const AuthService = { loginUser, refreshToken, changePassword };
